@@ -21,6 +21,7 @@
     "test:payments": "node --test tests/payment-flow.test.mjs",
     "cashfree:smoke": "node scripts/cashfree-smoke.mjs",
     "deploy:check": "node scripts/deploy-env-check.mjs",
+    "pages:build": "npx vercel build --yes && rm -rf .next && ln -s frontend/.next .next && npx @cloudflare/next-on-pages@1 --skip-build",
     "db:generate": "npm run db:generate -w @paag/backend",
     "db:push": "npm run db:push -w @paag/backend",
     "db:seed": "npm run db:seed -w @paag/backend"

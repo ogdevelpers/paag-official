@@ -169,6 +169,8 @@ https://paag-api.onrender.com/api/payments/webhook/cashfree
 | CORS errors | Same as above; only set `FRONTEND_URL`, not multiple origins unless comma-separated |
 | Images 404 | Check `SUPABASE_STORAGE_BUCKET` and service role key on Render |
 | Build fails on Vercel | Root Directory must be `frontend`; install runs from monorepo root |
+| Cloudflare build fails with `frontend/frontend/.next` | Root Directory must be **repo root** (not `frontend`); use build command `npm run pages:build` — see below |
+| Cloudflare build fails with `.next` not found at repo root | Push `.vercel/project.json` and use `npm run pages:build` (not raw `next-on-pages` alone) |
 | Studio login fails | Set `PAAG_STUDIO_PASSWORD` on Render; use `studio@paag.in` |
 
 ---
@@ -178,3 +180,24 @@ https://paag-api.onrender.com/api/payments/webhook/cashfree
 - **Backend on Railway / Fly.io** — use existing `backend/Dockerfile`; set the same env vars.
 - **Both on Render** — possible, but Vercel is smoother for Next.js 16.
 - **Cloudflare Pages** — frontend only; still need Render (or similar) for the NestJS API.
+
+### Cloudflare Pages (monorepo)
+
+Cloudflare runs `npx vercel build` for Next.js. If **Root Directory** is set to `frontend`, the Vercel CLI doubles the path and fails with:
+
+```text
+ENOENT: .../frontend/frontend/.next/package.json
+```
+
+Use the root `vercel.json` and these dashboard settings instead:
+
+| Setting | Value |
+|---|---|
+| **Root Directory** | *(leave empty — repo root)* |
+| **Install Command** | `npm ci` |
+| **Build Command** | `npm run pages:build` |
+| **Build output directory** | `.vercel/output/static` |
+
+Set `API_INTERNAL_URL` in Cloudflare environment variables (same as Vercel step 3).
+
+The repo includes `.vercel/project.json` so `vercel build` (run internally by next-on-pages) knows the Next.js app lives in `frontend/` and outputs to `frontend/.next` instead of looking for `.next` at the repo root.

@@ -16,6 +16,10 @@ backend/dist
 !frontend/.env.example
 !backend/.env.example
 
+# vercel / cloudflare build artifacts
+.vercel/*
+!.vercel/project.json
+
 # misc
 .DS_Store
 *.pem
